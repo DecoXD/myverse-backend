@@ -6,7 +6,7 @@ const User = require("../models/User");
 
 module.exports = class PostController { 
 
-    static async  getPostsByParam(param,value){
+    static async  getPostsByParam(param,value) {
         try {
             const posts = await Post.findAll({raw:true,where:{
                 [param]:value
@@ -15,6 +15,25 @@ module.exports = class PostController {
         } catch (error) {
             return error.message
         }
+    }
+
+    static async showPosts(req,res) {
+        //pegar id do usuario
+        const token = getToken(req)
+        const userId = await getUserIdByToken(token)
+        //filtrar os posts pertencentes a este usuário      
+        try {
+            const posts = await Post.findAll({raw:true,where:{UserId:userId}})
+           
+            //renderizar na tela
+        //ACHO MELHOR FAZER NO TRYCATCH AQ MSM
+            res.status(200).json({posts})
+            return
+        } catch (error) {
+            res.status(422).json({message:'ocorreu algum erro ao tentar mostrar suas postagens'})
+            return
+        }
+          
     }
 
     static async createPost(req,res) {
@@ -62,25 +81,6 @@ module.exports = class PostController {
         return
     }
 
-    static async showPosts(req,res) {
-        //pegar id do usuario
-        const token = getToken(req)
-        const userId = await getUserIdByToken(token)
-        //filtrar os posts pertencentes a este usuário      
-        try {
-            const posts = await Post.findAll({raw:true,where:{UserId:userId}})
-           
-            //renderizar na tela
-        //ACHO MELHOR FAZER NO TRYCATCH AQ MSM
-            res.status(200).json({posts})
-            return
-        } catch (error) {
-            res.status(422).json({message:'ocorreu algum erro ao tentar mostrar suas postagens'})
-            return
-        }
-          
-    }
-
     static async updatePost(req,res) {
         const {id} = req.params;
         const{title,discription} = req.body;
@@ -108,6 +108,34 @@ module.exports = class PostController {
         } catch (error) {
             res.status(400).json({message:'erro ao atualizar postagem'})
             console.log(error.message)
+            return
+        }
+
+    }
+
+    static async deletePost(req,res) {
+        const {id} = req.params;
+        
+        //check if is post owner
+        const token = getToken(req);
+        const userId = await  getUserIdByToken(token)
+        if(!userId){
+            res.status(401).json({message:"você deve estar autenticado"})
+            return
+        }
+        const [post] = await PostController.getPostsByParam('id',id);
+        
+        if(post.UserId != userId){
+            res.status(403).json({message:'operação não permitida'})
+            return
+        }
+
+        try {
+            await Post.destroy({where:{id}})
+            res.status(200).json({message:'Post deletado com sucesso'})
+            return
+        } catch (error) {
+            res.status(422).json({message:'ocorreu algum erro na sua solicitação'})
             return
         }
 

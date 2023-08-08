@@ -4,13 +4,15 @@ const checkToken = require('../helpers/jwt/checkToken');
 const imagesUpload = require('../helpers/multer/imagesUpload');
 const router = express.Router()
 
-//get routes
+//GET routes
 router.get('/',PostController.showPosts) //nao esquecer de checkar o token
 
 //POST ROUTES
 router.post('/create',imagesUpload.single('image'),PostController.createPost) //nao esquecer de checkar o token
 
-//patch routes
+//PATCH routes
 router.patch('/:id',checkToken,imagesUpload.single('image'),PostController.updatePost) //nao esquecer de checkar o token
 
+//DELETE routes
+router.delete('/del/:id',checkToken,PostController.deletePost)
 module.exports = router
