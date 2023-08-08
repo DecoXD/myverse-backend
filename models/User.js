@@ -1,12 +1,14 @@
 const conn = require("../db/conn");
-const {DataTypes} = require('sequelize')
+const {DataTypes} = require('sequelize');
+
 
 const User = conn.define('Users',{
-    email:{
+   
+    completeName:{
         type:DataTypes.STRING,
         required:true
     },
-    completeName:{
+    email:{
         type:DataTypes.STRING,
         required:true
     },
@@ -17,9 +19,14 @@ const User = conn.define('Users',{
     password:{
         type:DataTypes.STRING,
         required:true
+    },
+    friends:{
+        type:DataTypes.JSON,
+        defaultValue:[]
     }
    
 })
+
 
 
 module.exports = User

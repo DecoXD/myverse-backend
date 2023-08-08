@@ -35,12 +35,13 @@ module.exports = class UserController {
             userName,
             email,
             password,
-            confirmPassword}
+            confirmPassword
+            }
 
     //check if all fields are filled
 
         Object.keys(user).forEach((key) =>{
-            if(!user[key]){          
+            if(user[key] == undefined){          
                 res.status(422).json({message:`por favor, preencha todos os campos`})
                 return
             }
@@ -88,7 +89,8 @@ module.exports = class UserController {
         // create token and user
         try {
             const newUser =  await User.create(user)
-            res.status(200).json({message:'cadastro realizado com sucesso ',newUser})
+            const token = createUserToken(newUser,req)
+            res.status(200).json({message:'cadastro realizado com sucesso ',newUser,token})
             return
         } catch (error) {
         res.status(422).json({message:'ocorreu algum erro, tente novamente'})
@@ -123,8 +125,7 @@ module.exports = class UserController {
      
     }
 
-    static async checkUser(req,res) {
-
+    static async checkUser(req,res) {        
         const token = getToken(req)
         const userId = await getUserIdByToken(token)
         const user = await UserController.findUserByParam(userId,'id')
@@ -135,6 +136,20 @@ module.exports = class UserController {
         }
         res.status(200).json({message:'você está autenticado',user})
         
+    }
+    
+    static async getUser(req,res) {
+        const {userName} = req.params;
+        const user = await UserController.findUserByParam(userName,'userName')
+        if(!user){
+            res.status(422).json({message:'usuário nao encontrado'})
+            return
+        }
+        res.status(200).json({message:'usuário encontrado',user})
+    }
+
+    static async updateUser(req,res) {
+
     }
 
 }
