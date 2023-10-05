@@ -10,11 +10,13 @@ const User = conn.define('Users',{
     },
     email:{
         type:DataTypes.STRING,
-        required:true
+        required:true,
+        unique:true
     },
     userName:{
         type:DataTypes.STRING,
-        required:true
+        required:true,
+        unique:true
     },
     password:{
         type:DataTypes.STRING,
@@ -22,10 +24,12 @@ const User = conn.define('Users',{
     },
     friends:{
         type:DataTypes.JSON,
-        defaultValue:[]
+        defaultValue:[], // array de ids
+        allowNull:true
     }
    
 })
+
 
 
 

@@ -12,10 +12,9 @@ await jwt.verify(token,secret,(err,decodedtoken)=>{
         res.status(422).json({message:'token invalido'})
         return
     }
-    else{
         // res.status(200).json({message:'token valido',token})
         next()
-    }
+   
 })
 }
 

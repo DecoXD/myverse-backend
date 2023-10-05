@@ -7,7 +7,8 @@ const getUserIdByToken = require("../helpers/jwt/getUserByToken");
 module.exports = class UserController {
 
     static isValidEmailAddress(email){
-        const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        const regexEmail = /^[a-zA-Z0-9._%+-]+@+(outlook|gmail)+\.com/
+    
         return regexEmail.test(email)
     }
 
@@ -27,6 +28,8 @@ module.exports = class UserController {
 
     }
 
+    
+
     static async register(req,res) {
         const {completeName,userName,email,password,confirmPassword} = req.body;
         
@@ -35,7 +38,8 @@ module.exports = class UserController {
             userName,
             email,
             password,
-            confirmPassword
+            confirmPassword,
+            
             }
 
     //check if all fields are filled
@@ -64,6 +68,7 @@ module.exports = class UserController {
                     {userName:userName}
                     ]
             }})
+           
             
             if(userExists){
                 res.status(422).json({message:'Verifique seu email ou nome de usuário e tente novamente '})
@@ -71,7 +76,7 @@ module.exports = class UserController {
             }
         
         } catch (error) {
-            res.status(422).json({message:'ocorreu algum erro, tente novamente mais tarde'})
+            res.status(422).json({message:error.message})
             return
         }
         

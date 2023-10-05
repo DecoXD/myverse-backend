@@ -19,8 +19,8 @@ const Post = conn.define('Posts',{
 
 })
 
-
 Post.belongsTo(User)
 User.hasMany(Post)
+
 
 module.exports = Post

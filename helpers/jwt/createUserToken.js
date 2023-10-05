@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken')
 const createUserToken = (user,req) => {
     
     const payload = {
-       
         completeName:user.completeName,
         id:user.id
     }
